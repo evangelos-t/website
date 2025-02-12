@@ -126,6 +126,25 @@
             const mainSubtitle = document.getElementById("main-subtitle");
             const backToHome = document.getElementById("back-to-home");
 
+              // Function to handle redirects
+        function handleRedirect() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectParam = urlParams.get('redirect');
+
+            if (redirectParam) {
+                // Remove the query parameter from the URL
+                const newUrl = window.location.origin + redirectParam;
+                history.replaceState({}, '', newUrl);
+
+                // Extract the page name (e.g., "portfolio")
+                const page = redirectParam.split("/").pop() || "home";
+                loadContent(page);
+            }
+        }
+
+        // Handle redirect on page load
+        handleRedirect();
+
             // Fade out the content
             content.classList.add("fade-out");
 
