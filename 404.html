@@ -5,23 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
     <script>
-        // List of valid subpages
-        const validSubpages = ["about", "services", "portfolio", "contact"];
-
-        // Extract the subpage from the URL path
-        const path = window.location.pathname.split("/").pop();
-
-        // Redirect only if the subpage is valid
-        if (validSubpages.includes(path)) {
-            window.location.href = `/website/index.html`;
-        } else {
-            // Display a 404 message for invalid paths
-            document.body.innerHTML = `
-                <h1>404 - Page Not Found</h1>
-                <p>The page you are looking for does not exist.</p>
-                <a href="/website/">Go back to the homepage</a>
-            `;
-        }
+        // Redirect all paths to index.html
+        const path = window.location.pathname;
+        window.location.href = `/website/index.html`;
     </script>
 </head>
 <body>
