@@ -15,6 +15,7 @@
         }
         header {
             padding: 50px 20px;
+            position: relative;
         }
         nav {
             margin: 20px 0;
@@ -44,32 +45,44 @@
             height: 100%;
             z-index: -1;
         }
+        #content {
+            position: relative;
+            z-index: 1;
+        }
+        /* Style for the "Back to Home" link */
+        #back-to-home {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: none; /* Hidden by default */
+        }
     </style>
 </head>
 <body>
     <div id="vanta-bg"></div>
-    <header>
-        <h1>Welcome to My Black-Themed Website</h1>
-        <p>Simple. Clean. Minimalistic.</p>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="about.html">About</a>
-            <a href="services.html">Services</a>
-            <a href="portfolio.html">Portfolio</a>
-            <a href="contact.html">Contact</a>
-        </nav>
-    </header>
-    <section>
-        <h2>About</h2>
-        <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
-    </section>
-    <section>
-        <h2>Contact</h2>
-        <p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>
-    </section>
-    <footer>
-        <p>&copy; 2025 My Black-Themed Website</p>
-    </footer>
+    <div id="content">
+        <header>
+            <h1 id="main-title">Welcome to My Black-Themed Website</h1>
+            <p id="main-subtitle">Simple. Clean. Minimalistic.</p>
+            <nav>
+                <a href="#" data-page="home">Home</a>
+                <a href="#" data-page="about">About</a>
+                <a href="#" data-page="services">Services</a>
+                <a href="#" data-page="portfolio">Portfolio</a>
+                <a href="#" data-page="contact">Contact</a>
+            </nav>
+            <!-- "Back to Home" link -->
+            <a id="back-to-home" href="#" data-page="home">← Back to Home</a>
+        </header>
+        <section id="main-content">
+            <!-- Default content (Home) -->
+            <h2>About</h2>
+            <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+        </section>
+        <footer>
+            <p>&copy; 2025 My Black-Themed Website</p>
+        </footer>
+    </div>
 
     <!-- Include THREE.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -77,7 +90,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
     <script>
         // Initialize Vanta.js birds effect
-        VANTA.BIRDS({
+        const vantaEffect = VANTA.BIRDS({
             el: "#vanta-bg",
             mouseControls: true,
             touchControls: true,
@@ -96,6 +109,73 @@
             alignment: 50.00,
             cohesion: 50.00,
             quantity: 6.00  // Increased number of birds
+        });
+
+        // Function to load content dynamically
+        function loadContent(page) {
+            const content = document.getElementById("main-content");
+            const mainTitle = document.getElementById("main-title");
+            const mainSubtitle = document.getElementById("main-subtitle");
+            const backToHome = document.getElementById("back-to-home");
+
+            // Hide the main title and subtitle on subpages
+            if (page !== "home") {
+                mainTitle.style.display = "none";
+                mainSubtitle.style.display = "none";
+                backToHome.style.display = "block"; // Show "Back to Home" link
+            } else {
+                mainTitle.style.display = "block";
+                mainSubtitle.style.display = "block";
+                backToHome.style.display = "none"; // Hide "Back to Home" link
+            }
+
+            // Update content based on the selected page
+            switch (page) {
+                case "home":
+                    content.innerHTML = `
+                        <h2>About</h2>
+                        <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+                    `;
+                    break;
+                case "about":
+                    content.innerHTML = `
+                        <h2>About Me</h2>
+                        <p>This is the about page. Add your information here.</p>
+                    `;
+                    break;
+                case "services":
+                    content.innerHTML = `
+                        <h2>Our Services</h2>
+                        <p>This is the services page. Add your services here.</p>
+                    `;
+                    break;
+                case "portfolio":
+                    content.innerHTML = `
+                        <h2>Portfolio</h2>
+                        <p>This is the portfolio page. Showcase your work here.</p>
+                    `;
+                    break;
+                case "contact":
+                    content.innerHTML = `
+                        <h2>Contact</h2>
+                        <p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>
+                    `;
+                    break;
+                default:
+                    content.innerHTML = `
+                        <h2>About</h2>
+                        <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+                    `;
+            }
+        }
+
+        // Add event listeners to navigation links
+        document.querySelectorAll("nav a, #back-to-home").forEach(link => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                const page = link.getAttribute("data-page");
+                loadContent(page); // Load the corresponding content
+            });
         });
     </script>
 </body>
