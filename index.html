@@ -12,12 +12,10 @@
             margin: 0;
             padding: 0;
             text-align: center;
-            overflow: hidden;
         }
         header {
             padding: 50px 20px;
             position: relative;
-            z-index: 2;
         }
         nav {
             margin: 20px 0;
@@ -27,41 +25,42 @@
             text-decoration: none;
             margin: 0 15px;
             font-size: 1.2em;
-            transition: opacity 0.3s;
         }
         nav a:hover {
-            opacity: 0.8;
+            text-decoration: underline;
         }
         section {
             padding: 20px;
-            position: relative;
-            z-index: 2;
+        }
+        footer {
+            padding: 10px;
+            font-size: 0.8em;
+            color: #888;
         }
         #vanta-bg {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            z-index: -1;
         }
         #content {
-            opacity: 0;
-            animation: fadeIn 0.5s forwards;
-            animation-delay: 0.3s;
+            position: relative;
+            z-index: 1;
         }
         #back-to-home {
-            position: fixed;
+            position: absolute;
             top: 20px;
             right: 20px;
             display: none;
-            color: #0af;
-            text-decoration: none;
-            z-index: 3;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        #main-content {
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        #main-content.fade-out {
+            opacity: 0;
         }
     </style>
 </head>
@@ -78,27 +77,22 @@
                 <a href="/website/portfolio" data-page="portfolio">Portfolio</a>
                 <a href="/website/contact" data-page="contact">Contact</a>
             </nav>
-            <a id="back-to-home" href="/website/" data-page="home">← Home</a>
+            <a id="back-to-home" href="/website/" data-page="home">← Back to Home</a>
         </header>
         <section id="main-content">
-            <!-- Content loaded dynamically -->
+            <!-- Default home content -->
+            <h2>About</h2>
+            <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
         </section>
+        <footer>
+            <!-- Footer content removed -->
+        </footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
     <script>
-        // Immediate path correction
-        (function() {
-            const validPaths = ['', '/', '/about', '/services', '/portfolio', '/contact'];
-            const currentPath = window.location.pathname.replace('/website', '');
-            
-            if (!validPaths.includes(currentPath)) {
-                history.replaceState(null, null, '/website/');
-            }
-        })();
-
-        // Vanta.js initialization
+        // Initialize Vanta.js birds effect
         const vantaEffect = VANTA.BIRDS({
             el: "#vanta-bg",
             mouseControls: true,
@@ -107,6 +101,7 @@
             minHeight: 200.00,
             minWidth: 200.00,
             scale: 1.00,
+            scaleMobile: 1.00,
             backgroundColor: 0x000000,
             color1: 0x0a0a0a,
             color2: 0x0a0a0a,
@@ -119,74 +114,82 @@
             quantity: 6.00
         });
 
-        // Routing system
-        const pages = {
-            home: {
-                title: "About",
-                content: "This is a minimalist website with a dark theme, perfect for GitHub Pages."
-            },
-            about: {
-                title: "About Me",
-                content: "This is the about page. Add your information here."
-            },
-            services: {
-                title: "Our Services",
-                content: "This is the services page. Add your services here."
-            },
-            portfolio: {
-                title: "Portfolio",
-                content: "This is the portfolio page. Showcase your work here."
-            },
-            contact: {
-                title: "Contact",
-                content: 'Reach me at <a href="mailto:example@example.com">example@example.com</a>'
-            }
-        };
+        // Routing logic
+        const validPages = ["home", "about", "services", "portfolio", "contact"];
 
-        function loadPage(page) {
-            const mainContent = document.getElementById("main-content");
+        function loadContent(page) {
+            const content = document.getElementById("main-content");
             const mainTitle = document.getElementById("main-title");
             const mainSubtitle = document.getElementById("main-subtitle");
             const backToHome = document.getElementById("back-to-home");
 
-            if (page === 'home') {
-                mainTitle.style.display = 'block';
-                mainSubtitle.style.display = 'block';
-                backToHome.style.display = 'none';
-            } else {
-                mainTitle.style.display = 'none';
-                mainSubtitle.style.display = 'none';
-                backToHome.style.display = 'block';
+            content.classList.add("fade-out");
+            
+            setTimeout(() => {
+                if (page !== "home") {
+                    mainTitle.style.display = "none";
+                    mainSubtitle.style.display = "none";
+                    backToHome.style.display = "block";
+                } else {
+                    mainTitle.style.display = "block";
+                    mainSubtitle.style.display = "block";
+                    backToHome.style.display = "none";
+                }
+
+                switch(page) {
+                    case 'home':
+                        content.innerHTML = `<h2>About</h2><p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>`;
+                        break;
+                    case 'about':
+                        content.innerHTML = `<h2>About Me</h2><p>This is the about page. Add your information here.</p>`;
+                        break;
+                    case 'services':
+                        content.innerHTML = `<h2>Our Services</h2><p>This is the services page. Add your services here.</p>`;
+                        break;
+                    case 'portfolio':
+                        content.innerHTML = `<h2>Portfolio</h2><p>This is the portfolio page. Showcase your work here.</p>`;
+                        break;
+                    case 'contact':
+                        content.innerHTML = `<h2>Contact</h2><p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>`;
+                        break;
+                    default:
+                        content.innerHTML = `<h2>404 - Page Not Found</h2><p>The page you are looking for does not exist.</p><a href="/website/">Go back to the homepage</a>`;
+                }
+
+                content.classList.remove("fade-out");
+                history.replaceState({}, "", `/website/${page === 'home' ? '' : page}`);
+            }, 300);
+        }
+
+        // Handle initial load and redirects
+        function handleInitialLoad() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('redirect');
+            
+            if (redirect) {
+                const page = redirect.replace('/website/', '').split('/')[0] || 'home';
+                if (validPages.includes(page)) {
+                    loadContent(page);
+                    return;
+                }
             }
 
-            mainContent.innerHTML = `
-                <h2>${pages[page].title}</h2>
-                <p>${pages[page].content}</p>
-            `;
-
-            history.replaceState({page}, '', `/website/${page === 'home' ? '' : page}`);
+            const path = window.location.pathname.replace('/website/', '');
+            const page = validPages.includes(path) ? path : 'home';
+            loadContent(page);
         }
 
         // Event listeners
-        document.querySelectorAll('[data-page]').forEach(link => {
-            link.addEventListener('click', (e) => {
+        document.querySelectorAll("nav a, #back-to-home").forEach(link => {
+            link.addEventListener("click", (e) => {
                 e.preventDefault();
-                loadPage(e.target.dataset.page);
+                const page = e.target.getAttribute("data-page");
+                loadContent(page);
             });
         });
 
-        window.addEventListener('popstate', (e) => {
-            if (e.state?.page) {
-                loadPage(e.state.page);
-            }
-        });
-
-        // Initial load
-        const initialPage = window.location.pathname
-            .replace('/website/', '')
-            .split('/')[0] || 'home';
-            
-        loadPage(validPaths.includes(initialPage) ? initialPage : 'home');
+        window.addEventListener("popstate", handleInitialLoad);
+        handleInitialLoad();
     </script>
 </body>
 </html>
