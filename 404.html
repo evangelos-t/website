@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
     <script>
-        // Redirect all paths to index.html
-        const path = window.location.pathname;
-        window.location.href = `/website/index.html`;
+        // Extract the requested path (e.g., "/portfolio")
+        const requestedPath = window.location.pathname.replace('/website', ''); // Remove repository name if needed
+        // Redirect to index.html with a query parameter
+        window.location.href = `/website/index.html?redirect=${encodeURIComponent(requestedPath)}`;
     </script>
 </head>
 <body>
