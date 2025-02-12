@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-        // Extract the requested path (e.g., "/portfolio")
-        const requestedPath = window.location.pathname.replace('/website', ''); // Remove repository name if needed
-        // Redirect to index.html with a query parameter
+        const requestedPath = window.location.pathname;
         window.location.href = `/website/index.html?redirect=${encodeURIComponent(requestedPath)}`;
     </script>
 </head>
