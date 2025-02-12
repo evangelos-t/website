@@ -73,14 +73,14 @@
             <h1 id="main-title">Welcome to My Black-Themed Website</h1>
             <p id="main-subtitle">Simple. Clean. Minimalistic.</p>
             <nav>
-                <a href="/website/" data-page="home">Home</a>
-                <a href="/website/about" data-page="about">About</a>
-                <a href="/website/services" data-page="services">Services</a>
-                <a href="/website/portfolio" data-page="portfolio">Portfolio</a>
-                <a href="/website/contact" data-page="contact">Contact</a>
+                <a href="#home" data-page="home">Home</a>
+                <a href="#about" data-page="about">About</a>
+                <a href="#services" data-page="services">Services</a>
+                <a href="#portfolio" data-page="portfolio">Portfolio</a>
+                <a href="#contact" data-page="contact">Contact</a>
             </nav>
             <!-- "Back to Home" link -->
-            <a id="back-to-home" href="/website/" data-page="home">← Back to Home</a>
+            <a id="back-to-home" href="#home" data-page="home">← Back to Home</a>
         </header>
         <section id="main-content">
             <!-- Default content (Home) -->
@@ -186,10 +186,11 @@
             }, 300); // Match the duration of the fade-out transition
         }
 
-        // Function to handle path changes
-        function handlePathChange() {
-            const path = window.location.pathname; // Get the current path
-            const page = path.split("/").pop() || "home"; // Extract the page name
+        // Function to handle hash changes
+        function handleHashChange() {
+            const hash = window.location.hash.substring(1); // Remove the '#' from the hash
+            const validPages = ["home", "about", "services", "portfolio", "contact"];
+            const page = validPages.includes(hash) ? hash : "home"; // Default to "home" if hash is invalid
             loadContent(page);
         }
 
@@ -198,16 +199,15 @@
             link.addEventListener("click", (e) => {
                 e.preventDefault(); // Prevent default link behavior
                 const page = link.getAttribute("data-page");
-                history.pushState({}, "", `/website/${page === "home" ? "" : page}`); // Update the URL
-                handlePathChange(); // Load the corresponding content
+                window.location.hash = page; // Update the URL hash
             });
         });
 
-        // Listen for popstate events (e.g., when the user navigates back/forward)
-        window.addEventListener("popstate", handlePathChange);
+        // Listen for hash changes (e.g., when the user navigates back/forward)
+        window.addEventListener("hashchange", handleHashChange);
 
-        // Load content based on the initial path
-        handlePathChange();
+        // Load content based on the initial hash
+        handleHashChange();
     </script>
 </body>
 </html>
