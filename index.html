@@ -89,6 +89,7 @@
   <script>
     window.MathJax = {
       tex: {
+        // We use inline math delimiters \( and \)
         inlineMath: [['\\(', '\\)']],
         displayMath: [['\\[', '\\]']],
         processEscapes: true,
@@ -124,7 +125,8 @@
       <h2>About</h2>
       <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
       <div class="math">
-        Example LaTeX equation: \( E = mc^2 \)
+        <!-- Note the double backslashes in the template literal so that the resulting HTML contains \( and \) -->
+        Example LaTeX equation: \\( E = mc^2 \\)
       </div>
     </section>
     <footer>
@@ -166,79 +168,4 @@
       const content = document.getElementById("main-content");
       const mainTitle = document.getElementById("main-title");
       const mainSubtitle = document.getElementById("main-subtitle");
-      const backToHome = document.getElementById("back-to-home");
-
-      content.classList.add("fade-out");
-      
-      setTimeout(() => {
-        if (page !== "home") {
-          mainTitle.style.display = "none";
-          mainSubtitle.style.display = "none";
-          backToHome.style.display = "block";
-        } else {
-          mainTitle.style.display = "block";
-          mainSubtitle.style.display = "block";
-          backToHome.style.display = "none";
-        }
-
-        switch(page) {
-          case 'home':
-            content.innerHTML = `
-              <h2>About</h2>
-              <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
-              <div class="math">
-                Example LaTeX equation: \\( E = mc^2 \\)
-              </div>
-            `;
-            break;
-          case 'about':
-            content.innerHTML = `
-              <h2>About Me</h2>
-              <p>This is the about page. Add your information here.</p>
-            `;
-            break;
-          case 'services':
-            content.innerHTML = `
-              <h2>Our Services</h2>
-              <p>This is the services page. Add your services here.</p>
-            `;
-            break;
-          case 'portfolio':
-            content.innerHTML = `
-              <h2>Portfolio</h2>
-              <p>This is the portfolio page. Showcase your work here.</p>
-            `;
-            break;
-          case 'contact':
-            content.innerHTML = `
-              <h2>Contact</h2>
-              <p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>
-            `;
-            break;
-          default:
-            content.innerHTML = `
-              <h2>404 - Page Not Found</h2>
-              <p>The page you are looking for does not exist.</p>
-              <a href="#" data-page="home">Go back to the homepage</a>
-            `;
-        }
-
-        content.classList.remove("fade-out");
-
-        // Re-render MathJax for the updated content only.
-        if (window.MathJax) {
-          MathJax.typesetPromise([content]).catch(err => console.log('MathJax typeset error:', err));
-        }
-      }, 300);
-    }
-
-    document.querySelectorAll("nav a, #back-to-home").forEach(link => {
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        const page = e.target.getAttribute("data-page");
-        loadContent(page);
-      });
-    });
-  </script>
-</body>
-</html>
+      const backToHome = do
