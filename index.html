@@ -100,16 +100,18 @@
             <h1 id="main-title">Welcome to My Black-Themed Website</h1>
             <p id="main-subtitle">Simple. Clean. Minimalistic.</p>
             <nav>
-                <a href="./" data-page="home">Home</a>
-                <a href="./about" data-page="about">About</a>
-                <a href="./services" data-page="services">Services</a>
-                <a href="./portfolio" data-page="portfolio">Portfolio</a>
-                <a href="./contact" data-page="contact">Contact</a>
+                <a href="/" data-page="home">Home</a>
+                <a href="/about" data-page="about">About</a>
+                <a href="/services" data-page="services">Services</a>
+                <a href="/portfolio" data-page="portfolio">Portfolio</a>
+                <a href="/contact" data-page="contact">Contact</a>
             </nav>
-            <a id="back-to-home" href="./" data-page="home">← Back to Home</a>
+            <a id="back-to-home" href="/" data-page="home">← Back to Home</a>
         </header>
         <section id="main-content">
-            <!-- Content loaded dynamically -->
+            <h2>About</h2>
+            <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+            <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
         </section>
         <footer></footer>
     </div>
@@ -117,13 +119,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
     <script>
-        const basePath = window.location.pathname.startsWith('/website') 
-            ? '/website/' 
-            : '/';
-
-        let vantaEffect;
+        // Initialize background
         document.addEventListener('DOMContentLoaded', () => {
-            vantaEffect = VANTA.BIRDS({
+            const vantaEffect = VANTA.BIRDS({
                 el: "#vanta-bg",
                 mouseControls: true,
                 touchControls: true,
@@ -155,7 +153,14 @@
             }, 100);
         });
 
+        // Routing logic
         const validPages = ["home", "about", "services", "portfolio", "contact"];
+        const basePath = window.location.pathname.split('/')[1] || '';
+
+        function getCurrentPage() {
+            const pathSegments = window.location.pathname.split('/').filter(p => p);
+            return pathSegments.length > 1 ? pathSegments[1] : 'home';
+        }
 
         function loadContent(page) {
             const content = document.getElementById('content');
@@ -204,34 +209,37 @@
                 document.getElementById('main-content').innerHTML = templates[page] || `
                     <h2>404 - Page Not Found</h2>
                     <p>The page you are looking for does not exist.</p>
-                    <a href="${basePath}">Go back to homepage</a>
+                    <a href="/">Go back to homepage</a>
                 `;
 
                 void content.offsetHeight;
                 content.classList.remove('fade-out');
                 MathJax.typeset();
-                history.replaceState({}, "", `${basePath}${page === 'home' ? '' : page}`);
+                history.replaceState({ page }, "", `/${page === 'home' ? '' : page}`);
             }, 500);
         }
 
+        // Event listeners
         document.querySelectorAll('nav a, #back-to-home').forEach(link => {
             link.addEventListener('click', (e) => {
-                if (e.ctrlKey || e.metaKey) return;
                 e.preventDefault();
                 const page = e.target.getAttribute('data-page');
+                history.pushState({ page }, "", `/${page === 'home' ? '' : page}`);
                 loadContent(page);
             });
         });
 
+        window.addEventListener('popstate', (e) => {
+            const page = e.state?.page || getCurrentPage();
+            loadContent(page);
+        });
+
+        // Initial load
         function handleInitialLoad() {
-            let path = window.location.pathname;
-            if (basePath !== '/') path = path.replace(basePath, '');
-            else path = path.replace(/^\//, '');
-            
-            loadContent(validPages.includes(path) ? path : 'home');
+            const page = getCurrentPage();
+            loadContent(validPages.includes(page) ? page : 'home');
         }
 
-        window.addEventListener('popstate', handleInitialLoad);
         handleInitialLoad();
     </script>
 </body>
