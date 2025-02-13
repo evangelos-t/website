@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Black Themed Website</title>
-
-    <!-- Link to Google Fonts for Roboto -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-
+    <!-- Google Fonts: Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -111,16 +109,15 @@
             <h1 id="main-title">Welcome to My Black-Themed Website</h1>
             <p id="main-subtitle">Simple. Clean. Minimalistic.</p>
             <nav>
-                <a href="/website/" data-page="home">Home</a>
-                <a href="/website/about" data-page="about">About</a>
-                <a href="/website/services" data-page="services">Services</a>
-                <a href="/website/portfolio" data-page="portfolio">Portfolio</a>
-                <a href="/website/contact" data-page="contact">Contact</a>
+                <a href="#" data-page="home">Home</a>
+                <a href="#" data-page="about">About</a>
+                <a href="#" data-page="services">Services</a>
+                <a href="#" data-page="portfolio">Portfolio</a>
+                <a href="#" data-page="contact">Contact</a>
             </nav>
-            <a id="back-to-home" href="/website/" data-page="home">← Back to Home</a>
+            <a id="back-to-home" href="#" data-page="home">← Back to Home</a>
         </header>
         <section id="main-content">
-            <!-- Default home content -->
             <h2>About</h2>
             <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
             <div class="math">
@@ -128,7 +125,8 @@
             </div>
         </section>
         <footer>
-            <!-- Footer content removed -->
+            <!-- Footer content -->
+            &copy; 2025 Black Themed Website. All rights reserved.
         </footer>
     </div>
 
@@ -138,7 +136,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
     
     <script>
-        // Initialize Vanta.js birds effect
         const vantaEffect = VANTA.BIRDS({
             el: "#vanta-bg",
             mouseControls: true,
@@ -181,24 +178,54 @@
                     backToHome.style.display = "none";
                 }
 
-                content.innerHTML = `
-                    <h2>${page.charAt(0).toUpperCase() + page.slice(1)}</h2>
-                    <p>This is the ${page} page. Add your content here.</p>
-                `;
+                switch(page) {
+                    case 'home':
+                        content.innerHTML = `
+                            <h2>About</h2>
+                            <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+                            <div class="math">
+                                Example LaTeX equation: \\( E = mc^2 \\)
+                            </div>
+                        `;
+                        break;
+                    case 'about':
+                        content.innerHTML = `
+                            <h2>About Me</h2>
+                            <p>This is the about page. Add your information here.</p>
+                        `;
+                        break;
+                    case 'services':
+                        content.innerHTML = `
+                            <h2>Our Services</h2>
+                            <p>This is the services page. Add your services here.</p>
+                        `;
+                        break;
+                    case 'portfolio':
+                        content.innerHTML = `
+                            <h2>Portfolio</h2>
+                            <p>This is the portfolio page. Showcase your work here.</p>
+                        `;
+                        break;
+                    case 'contact':
+                        content.innerHTML = `
+                            <h2>Contact</h2>
+                            <p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>
+                        `;
+                        break;
+                    default:
+                        content.innerHTML = `
+                            <h2>404 - Page Not Found</h2>
+                            <p>The page you are looking for does not exist.</p>
+                            <a href="#">Go back to the homepage</a>
+                        `;
+                }
 
                 content.classList.remove("fade-out");
-                history.replaceState({}, "", `/website/${page === 'home' ? '' : page}`);
 
-                if(window.MathJax) {
+                if (window.MathJax) {
                     MathJax.typesetPromise().catch(err => console.log('MathJax typeset error:', err));
                 }
             }, 300);
-        }
-
-        function handleInitialLoad() {
-            const path = window.location.pathname.replace('/website/', '');
-            const page = validPages.includes(path) ? path : 'home';
-            loadContent(page);
         }
 
         document.querySelectorAll("nav a, #back-to-home").forEach(link => {
@@ -208,9 +235,6 @@
                 loadContent(page);
             });
         });
-
-        window.addEventListener("popstate", handleInitialLoad);
-        handleInitialLoad();
     </script>
 </body>
 </html>
