@@ -4,39 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Black Themed Website</title>
+
+    <!-- Link to Google Fonts for Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
     <style>
         body {
+            font-family: 'Roboto', sans-serif;
             background-color: #000;
             color: #fff;
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             text-align: center;
+            font-size: 1.1em;
         }
+
         header {
             padding: 50px 20px;
             position: relative;
         }
+
         nav {
             margin: 20px 0;
         }
+
         nav a {
             color: #0af;
             text-decoration: none;
             margin: 0 15px;
             font-size: 1.2em;
         }
+
         nav a:hover {
             text-decoration: underline;
         }
+
         section {
             padding: 20px;
         }
+
         footer {
             padding: 10px;
             font-size: 0.8em;
             color: #888;
         }
+
         #vanta-bg {
             position: absolute;
             top: 0;
@@ -45,24 +57,52 @@
             height: 100%;
             z-index: -1;
         }
+
         #content {
             position: relative;
             z-index: 1;
         }
+
         #back-to-home {
             position: absolute;
             top: 20px;
             right: 20px;
             display: none;
         }
+
         #main-content {
             opacity: 1;
             transition: opacity 0.3s ease-in-out;
         }
+
         #main-content.fade-out {
             opacity: 0;
         }
+
+        .math {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
     </style>
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                packages: {'[+]': ['amsmath', 'physics']}
+            },
+            options: {
+                ignoreHtmlClass: 'nostem|no-math'
+            },
+            loader: {load: ['[tex]/amsmath', '[tex]/physics']}
+        };
+    </script>
+    
+    <!-- MathJax Library -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
 <body>
     <div id="vanta-bg"></div>
@@ -83,14 +123,20 @@
             <!-- Default home content -->
             <h2>About</h2>
             <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+            <div class="math">
+                Example LaTeX equation: \( E = mc^2 \)
+            </div>
         </section>
         <footer>
             <!-- Footer content removed -->
         </footer>
     </div>
 
+    <!-- Include THREE.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <!-- Include Vanta.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
+    
     <script>
         // Initialize Vanta.js birds effect
         const vantaEffect = VANTA.BIRDS({
@@ -114,7 +160,6 @@
             quantity: 6.00
         });
 
-        // Routing logic
         const validPages = ["home", "about", "services", "portfolio", "contact"];
 
         function loadContent(page) {
@@ -136,50 +181,26 @@
                     backToHome.style.display = "none";
                 }
 
-                switch(page) {
-                    case 'home':
-                        content.innerHTML = `<h2>About</h2><p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>`;
-                        break;
-                    case 'about':
-                        content.innerHTML = `<h2>About Me</h2><p>This is the about page. Add your information here.</p>`;
-                        break;
-                    case 'services':
-                        content.innerHTML = `<h2>Our Services</h2><p>This is the services page. Add your services here.</p>`;
-                        break;
-                    case 'portfolio':
-                        content.innerHTML = `<h2>Portfolio</h2><p>This is the portfolio page. Showcase your work here.</p>`;
-                        break;
-                    case 'contact':
-                        content.innerHTML = `<h2>Contact</h2><p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>`;
-                        break;
-                    default:
-                        content.innerHTML = `<h2>404 - Page Not Found</h2><p>The page you are looking for does not exist.</p><a href="/website/">Go back to the homepage</a>`;
-                }
+                content.innerHTML = `
+                    <h2>${page.charAt(0).toUpperCase() + page.slice(1)}</h2>
+                    <p>This is the ${page} page. Add your content here.</p>
+                `;
 
                 content.classList.remove("fade-out");
                 history.replaceState({}, "", `/website/${page === 'home' ? '' : page}`);
+
+                if(window.MathJax) {
+                    MathJax.typesetPromise().catch(err => console.log('MathJax typeset error:', err));
+                }
             }, 300);
         }
 
-        // Handle initial load and redirects
         function handleInitialLoad() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const redirect = urlParams.get('redirect');
-            
-            if (redirect) {
-                const page = redirect.replace('/website/', '').split('/')[0] || 'home';
-                if (validPages.includes(page)) {
-                    loadContent(page);
-                    return;
-                }
-            }
-
             const path = window.location.pathname.replace('/website/', '');
             const page = validPages.includes(path) ? path : 'home';
             loadContent(page);
         }
 
-        // Event listeners
         document.querySelectorAll("nav a, #back-to-home").forEach(link => {
             link.addEventListener("click", (e) => {
                 e.preventDefault();
