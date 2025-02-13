@@ -3,8 +3,12 @@
 <head>
     <meta charset="utf-8">
     <script>
-        sessionStorage.redirect = location.href;
-        location.replace('https://evangelos-t.github.io/website/');
+        // Preserve original path and redirect
+        const fullPath = window.location.href;
+        if (!fullPath.includes('/website/')) {
+            sessionStorage.redirect = fullPath;
+            window.location.replace('/website/');
+        }
     </script>
 </head>
 <body></body>
