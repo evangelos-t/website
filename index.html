@@ -18,18 +18,27 @@
             overflow-x: hidden;
         }
 
+        /* Initial loading state */
         body.loading {
             opacity: 0;
             visibility: hidden;
         }
 
+        /* Content animations */
         #content {
             position: relative;
             z-index: 1;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
         }
 
+        #content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Background animation */
         #vanta-bg {
             position: absolute;
             top: 0;
@@ -41,11 +50,14 @@
             transition: opacity 1s ease-in-out;
         }
 
+        /* Header styles */
         header {
             padding: 50px 20px;
             position: relative;
+            transition: opacity 0.5s ease;
         }
 
+        /* Navigation styles */
         nav {
             margin: 20px 0;
         }
@@ -55,30 +67,37 @@
             text-decoration: none;
             margin: 0 15px;
             font-size: 1.2em;
+            transition: opacity 0.3s ease;
         }
 
         nav a:hover {
             text-decoration: underline;
         }
 
+        /* Section styling */
         section {
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
         }
 
+        /* Back to home button */
         #back-to-home {
             position: fixed;
             top: 20px;
             right: 20px;
             color: #0af;
             text-decoration: none;
-            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 2;
         }
 
+        /* Fade transitions */
         .fade-out {
             opacity: 0 !important;
-            transition: opacity 0.3s ease-in-out;
+            transform: translateY(-10px);
+            transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
         }
     </style>
 </head>
@@ -97,106 +116,115 @@
             </nav>
             <a id="back-to-home" href="/website/" data-page="home">← Back to Home</a>
         </header>
-        <section id="main-content"></section>
+        <section id="main-content">
+            <h2>About</h2>
+            <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+            <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
+        </section>
+        <footer>
+            <!-- Footer content removed as requested -->
+        </footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
     <script>
-        // Initialize background
-        VANTA.BIRDS({
-            el: "#vanta-bg",
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 200.00,
-            minWidth: 200.00,
-            scale: 1.00,
-            scaleMobile: 1.00,
-            backgroundColor: 0x000000,
-            color1: 0x0a0a0a,
-            color2: 0x0a0a0a,
-            birdSize: 1.50,
-            wingSpan: 20.00,
-            speedLimit: 5.00,
-            separation: 50.00,
-            alignment: 50.00,
-            cohesion: 50.00,
-            quantity: 6.00
+        // Initialization sequence
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Vanta.js background first
+            const vantaEffect = VANTA.BIRDS({
+                el: "#vanta-bg",
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                backgroundColor: 0x000000,
+                color1: 0x0a0a0a,
+                color2: 0x0a0a0a,
+                birdSize: 1.50,
+                wingSpan: 20.00,
+                speedLimit: 5.00,
+                separation: 50.00,
+                alignment: 50.00,
+                cohesion: 50.00,
+                quantity: 6.00
+            });
+
+            // Start background transition first
+            setTimeout(() => {
+                document.getElementById('vanta-bg').style.opacity = 1;
+                
+                // Then start content transition after short delay
+                setTimeout(() => {
+                    document.body.classList.remove('loading');
+                    document.getElementById('content').classList.add('visible');
+                    document.body.style.opacity = 1;
+                    document.body.style.visibility = 'visible';
+                }, 300); // Adjusted delay for content fade-in
+            }, 100);
         });
 
-        // Show content after initialization
-        setTimeout(() => {
-            document.getElementById('vanta-bg').style.opacity = 1;
-            document.body.classList.remove('loading');
-            document.getElementById('content').style.opacity = 1;
-        }, 500);
-
-        // Routing logic
+        // Routing and content loading
         const validPages = ["home", "about", "services", "portfolio", "contact"];
-        const basePath = '/website/';
 
-        function loadContent(page, initialLoad = false) {
+        function loadContent(page) {
             const content = document.getElementById('content');
             const mainTitle = document.getElementById('main-title');
             const mainSubtitle = document.getElementById('main-subtitle');
             const backToHome = document.getElementById('back-to-home');
 
-            if (!initialLoad) {
-                content.classList.add('fade-out');
-            }
+            content.classList.add('fade-out');
 
             setTimeout(() => {
+                if (page !== 'home') {
+                    mainTitle.style.display = 'none';
+                    mainSubtitle.style.display = 'none';
+                    backToHome.style.opacity = '1';
+                } else {
+                    mainTitle.style.display = 'block';
+                    mainSubtitle.style.display = 'block';
+                    backToHome.style.opacity = '0';
+                }
+
                 const templates = {
                     home: `
                         <h2>About</h2>
                         <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
                         <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
                     `,
-                    about: `<h2>About Me</h2><p>This is the about page.</p>`,
+                    about: `
+                        <h2>About Me</h2>
+                        <p>This is the about page. Add your information here.</p>
+                    `,
                     services: `
                         <h2>Our Services</h2>
+                        <p>This is the services page. Add your services here.</p>
                         <p>LaTeX example: \\( a^2 + b^2 = c^2 \\)</p>
                     `,
-                    portfolio: `<h2>Portfolio</h2><p>My work examples.</p>`,
-                    contact: `<h2>Contact</h2><p>Email: example@example.com</p>`
+                    portfolio: `
+                        <h2>Portfolio</h2>
+                        <p>This is the portfolio page. Showcase your work here.</p>
+                    `,
+                    contact: `
+                        <h2>Contact</h2>
+                        <p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>
+                    `
                 };
 
                 document.getElementById('main-content').innerHTML = templates[page] || `
-                    <h2>404</h2><p>Page not found</p><a href="${basePath}">Home</a>
+                    <h2>404 - Page Not Found</h2>
+                    <p>The page you are looking for does not exist.</p>
+                    <a href="/website/">Go back to homepage</a>
                 `;
 
-                if (page !== 'home') {
-                    mainTitle.style.display = 'none';
-                    mainSubtitle.style.display = 'none';
-                    backToHome.style.display = 'block';
-                } else {
-                    mainTitle.style.display = 'block';
-                    mainSubtitle.style.display = 'block';
-                    backToHome.style.display = 'none';
-                }
-
-                if (!initialLoad) {
-                    content.classList.remove('fade-out');
-                }
+                void content.offsetHeight;
+                content.classList.remove('fade-out');
                 MathJax.typeset();
-                history.replaceState({}, "", `${basePath}${page === 'home' ? '' : page}`);
-            }, initialLoad ? 0 : 300);
-        }
-
-        // Handle initial load
-        function handleInitialLoad() {
-            const redirect = sessionStorage.redirect;
-            delete sessionStorage.redirect;
-            
-            const path = window.location.pathname.replace(basePath, '');
-            const page = validPages.includes(path) ? path : 'home';
-            
-            if (redirect) {
-                loadContent(redirect.split('/').pop());
-            } else {
-                loadContent(page, true);
-            }
+                history.replaceState({}, "", `/website/${page === 'home' ? '' : page}`);
+            }, 500);
         }
 
         // Event listeners
@@ -208,7 +236,18 @@
             });
         });
 
-        window.addEventListener('popstate', handleInitialLoad);
+        // Handle browser navigation
+        window.addEventListener('popstate', () => {
+            const path = window.location.pathname.replace('/website/', '');
+            loadContent(validPages.includes(path) ? path : 'home');
+        });
+
+        // Initial page load
+        function handleInitialLoad() {
+            const path = window.location.pathname.replace('/website/', '');
+            loadContent(validPages.includes(path) ? path : 'home');
+        }
+
         handleInitialLoad();
     </script>
 </body>
