@@ -8,22 +8,14 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        /* Keep all your existing CSS styles */
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Roboto', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            overflow-x: hidden;
-        }
-
+        /* Initial loading state */
         body.loading {
             opacity: 0;
             visibility: hidden;
+            overflow: hidden;
         }
 
+        /* Content animations */
         #content {
             position: relative;
             z-index: 1;
@@ -37,8 +29,9 @@
             transform: translateY(0);
         }
 
+        /* Background animation */
         #vanta-bg {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -48,10 +41,20 @@
             transition: opacity 1s ease-in-out;
         }
 
+        /* Keep other existing styles */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
         header {
             padding: 50px 20px;
             position: relative;
-            transition: opacity 0.5s ease;
         }
 
         nav {
@@ -63,7 +66,6 @@
             text-decoration: none;
             margin: 0 15px;
             font-size: 1.2em;
-            transition: opacity 0.3s ease;
         }
 
         nav a:hover {
@@ -109,57 +111,57 @@
             </nav>
             <a id="back-to-home" href="/website/" data-page="home">← Back to Home</a>
         </header>
-        <section id="main-content">
-            <h2>About</h2>
-            <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
-            <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
-        </section>
+        <section id="main-content"></section>
         <footer></footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
     <script>
-        // Initialize background
-        document.addEventListener('DOMContentLoaded', () => {
-            const vantaEffect = VANTA.BIRDS({
-                el: "#vanta-bg",
-                mouseControls: true,
-                touchControls: true,
-                gyroControls: false,
-                minHeight: 200.00,
-                minWidth: 200.00,
-                scale: 1.00,
-                scaleMobile: 1.00,
-                backgroundColor: 0x000000,
-                color1: 0x0a0a0a,
-                color2: 0x0a0a0a,
-                birdSize: 1.50,
-                wingSpan: 20.00,
-                speedLimit: 5.00,
-                separation: 50.00,
-                alignment: 50.00,
-                cohesion: 50.00,
-                quantity: 6.00
-            });
+        // Initialize background and content
+        function initializePage() {
+            try {
+                VANTA.BIRDS({
+                    el: "#vanta-bg",
+                    mouseControls: true,
+                    touchControls: true,
+                    gyroControls: false,
+                    minHeight: 200.00,
+                    minWidth: 200.00,
+                    scale: 1.00,
+                    scaleMobile: 1.00,
+                    backgroundColor: 0x000000,
+                    color1: 0x0a0a0a,
+                    color2: 0x0a0a0a,
+                    birdSize: 1.50,
+                    wingSpan: 20.00,
+                    speedLimit: 5.00,
+                    separation: 50.00,
+                    alignment: 50.00,
+                    cohesion: 50.00,
+                    quantity: 6.00
+                });
 
-            setTimeout(() => {
-                document.getElementById('vanta-bg').style.opacity = 1;
+                // Force content visibility after initialization
                 setTimeout(() => {
+                    document.getElementById('vanta-bg').style.opacity = 1;
                     document.body.classList.remove('loading');
                     document.getElementById('content').classList.add('visible');
-                    document.body.style.opacity = 1;
-                    document.body.style.visibility = 'visible';
                 }, 300);
-            }, 100);
-        });
+            } catch (error) {
+                console.error('Vanta.js initialization failed:', error);
+                // Fallback to showing content immediately
+                document.body.classList.remove('loading');
+                document.getElementById('content').classList.add('visible');
+            }
+        }
 
         // GitHub Pages configuration
         const basePath = '/website/';
         const validPages = ["home", "about", "services", "portfolio", "contact"];
 
         function getCurrentPage() {
-            const path = window.location.pathname.replace(basePath, '');
+            const path = window.location.pathname.replace(basePath, '').split('/')[0];
             return validPages.includes(path) ? path : 'home';
         }
 
@@ -169,96 +171,86 @@
             const mainSubtitle = document.getElementById('main-subtitle');
             const backToHome = document.getElementById('back-to-home');
 
-            content.classList.add('fade-out');
+            // Always ensure content is visible
+            content.style.opacity = '1';
+            content.style.visibility = 'visible';
 
-            setTimeout(() => {
-                if (page !== 'home') {
-                    mainTitle.style.display = 'none';
-                    mainSubtitle.style.display = 'none';
-                    backToHome.style.opacity = '1';
-                } else {
-                    mainTitle.style.display = 'block';
-                    mainSubtitle.style.display = 'block';
-                    backToHome.style.opacity = '0';
-                }
+            const templates = {
+                home: `
+                    <h2>About</h2>
+                    <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+                    <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
+                `,
+                about: `
+                    <h2>About Me</h2>
+                    <p>This is the about page. Add your information here.</p>
+                `,
+                services: `
+                    <h2>Our Services</h2>
+                    <p>This is the services page. Add your services here.</p>
+                    <p>LaTeX example: \\( a^2 + b^2 = c^2 \\)</p>
+                `,
+                portfolio: `
+                    <h2>Portfolio</h2>
+                    <p>This is the portfolio page. Showcase your work here.</p>
+                `,
+                contact: `
+                    <h2>Contact</h2>
+                    <p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>
+                `
+            };
 
-                const templates = {
-                    home: `
-                        <h2>About</h2>
-                        <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
-                        <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
-                    `,
-                    about: `
-                        <h2>About Me</h2>
-                        <p>This is the about page. Add your information here.</p>
-                    `,
-                    services: `
-                        <h2>Our Services</h2>
-                        <p>This is the services page. Add your services here.</p>
-                        <p>LaTeX example: \\( a^2 + b^2 = c^2 \\)</p>
-                    `,
-                    portfolio: `
-                        <h2>Portfolio</h2>
-                        <p>This is the portfolio page. Showcase your work here.</p>
-                    `,
-                    contact: `
-                        <h2>Contact</h2>
-                        <p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>
-                    `
-                };
+            document.getElementById('main-content').innerHTML = templates[page] || `
+                <h2>404 - Page Not Found</h2>
+                <p>The page you are looking for does not exist.</p>
+                <a href="${basePath}">Go back to homepage</a>
+            `;
 
-                document.getElementById('main-content').innerHTML = templates[page] || `
-                    <h2>404 - Page Not Found</h2>
-                    <p>The page you are looking for does not exist.</p>
-                    <a href="${basePath}">Go back to homepage</a>
-                `;
+            if (page !== 'home') {
+                mainTitle.style.display = 'none';
+                mainSubtitle.style.display = 'none';
+                backToHome.style.opacity = '1';
+            } else {
+                mainTitle.style.display = 'block';
+                mainSubtitle.style.display = 'block';
+                backToHome.style.opacity = '0';
+            }
 
-                void content.offsetHeight;
-                content.classList.remove('fade-out');
-                MathJax.typeset();
-                
-                // Update URL without triggering page reload
-                const newURL = `${basePath}${page === 'home' ? '' : page}`;
-                if (window.location.pathname !== newURL) {
-                    window.history.replaceState({}, '', newURL);
-                }
-            }, 500);
+            MathJax.typeset();
         }
 
-        // Handle initial load and redirects
-        (function() {
-            // Check for 404 redirect
-            if (sessionStorage.redirect) {
-                const redirect = sessionStorage.redirect;
-                delete sessionStorage.redirect;
+        // Handle initial load
+        function handleInitialLoad() {
+            const redirect = sessionStorage.redirect;
+            delete sessionStorage.redirect;
+            
+            if (redirect) {
                 const path = redirect.replace(location.origin + basePath, '');
                 loadContent(validPages.includes(path) ? path : 'home');
-                return;
-            }
-
-            // Normal load
-            const currentPage = getCurrentPage();
-            if (!validPages.includes(currentPage)) {
-                window.history.replaceState({}, '', basePath);
-                loadContent('home');
+                history.replaceState({}, '', redirect);
             } else {
-                loadContent(currentPage);
+                const page = getCurrentPage();
+                loadContent(page);
             }
-        })();
+        }
 
         // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePage();
+            handleInitialLoad();
+        });
+
         document.querySelectorAll('nav a, #back-to-home').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = e.target.getAttribute('data-page');
-                window.history.pushState({}, '', `${basePath}${page === 'home' ? '' : page}`);
+                history.pushState({}, '', `${basePath}${page}`);
                 loadContent(page);
             });
         });
 
         window.addEventListener('popstate', () => {
-            const currentPage = getCurrentPage();
-            loadContent(validPages.includes(currentPage) ? currentPage : 'home');
+            loadContent(getCurrentPage());
         });
     </script>
 </body>
