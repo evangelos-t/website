@@ -120,7 +120,6 @@
 
         // Routing logic
         const validPages = ["home", "about", "services", "portfolio", "contact"];
-        let isFirstLoad = true; // Flag to track if it's the first load
 
         function loadContent(page) {
             const content = document.getElementById("main-content");
@@ -128,9 +127,7 @@
             const mainSubtitle = document.getElementById("main-subtitle");
             const backToHome = document.getElementById("back-to-home");
 
-            if (!isFirstLoad) {
-                content.classList.add("fade-out");
-            }
+            content.classList.add("fade-out");
             
             setTimeout(() => {
                 if (page !== "home") {
@@ -178,7 +175,6 @@
                 const page = redirect.replace('/website/', '').split('/')[0] || 'home';
                 if (validPages.includes(page)) {
                     loadContent(page);
-                    isFirstLoad = false; // Set to false after the first load
                     return;
                 }
             }
@@ -186,7 +182,6 @@
             const path = window.location.pathname.replace('/website/', '');
             const page = validPages.includes(path) ? path : 'home';
             loadContent(page);
-            isFirstLoad = false; // Set to false after the first load
         }
 
         // Event listeners
