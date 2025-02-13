@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Redirecting...</title>
-    <script>
-        const requestedPath = window.location.pathname;
-        window.location.href = `/website/index.html?redirect=${encodeURIComponent(requestedPath)}`;
-    </script>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  
+  <!-- Include Roboto Font -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  
+  <!-- MathJax for LaTeX rendering -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  
+  <script>
+    const requestedPath = window.location.pathname;
+    window.location.href = `/website/index.html?redirect=${encodeURIComponent(requestedPath)}`;
+  </script>
 </head>
 <body>
-    <p>Redirecting...</p>
+  <p>Redirecting...</p>
 </body>
 </html>
