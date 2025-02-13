@@ -11,7 +11,7 @@
         body {
             background-color: #000;
             color: #fff;
-            font-family: 'Roboto', Arial, sans-serif; /* Changed to Roboto */
+            font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
             padding: 0;
             text-align: center;
@@ -51,19 +51,19 @@
         #content {
             position: relative;
             z-index: 1;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        #content.fade-out {
+            opacity: 0;
         }
         #back-to-home {
             position: absolute;
             top: 20px;
             right: 20px;
             display: none;
-        }
-        #main-content {
-            opacity: 1;
-            transition: opacity 0.3s ease-in-out;
-        }
-        #main-content.fade-out {
-            opacity: 0;
+            color: #0af;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -86,7 +86,7 @@
             <!-- Default home content -->
             <h2>About</h2>
             <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
-            <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p> <!-- Example LaTeX -->
+            <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
         </section>
         <footer>
             <!-- Footer content removed -->
@@ -122,12 +122,12 @@
         const validPages = ["home", "about", "services", "portfolio", "contact"];
 
         function loadContent(page) {
-            const content = document.getElementById("main-content");
+            const contentContainer = document.getElementById("content");
             const mainTitle = document.getElementById("main-title");
             const mainSubtitle = document.getElementById("main-subtitle");
             const backToHome = document.getElementById("back-to-home");
 
-            content.classList.add("fade-out");
+            contentContainer.classList.add("fade-out");
             
             setTimeout(() => {
                 if (page !== "home") {
@@ -142,26 +142,41 @@
 
                 switch(page) {
                     case 'home':
-                        content.innerHTML = `<h2>About</h2><p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p><p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>`;
+                        document.getElementById("main-content").innerHTML = `
+                            <h2>About</h2>
+                            <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+                            <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>`;
                         break;
                     case 'about':
-                        content.innerHTML = `<h2>About Me</h2><p>This is the about page. Add your information here.</p>`;
+                        document.getElementById("main-content").innerHTML = `
+                            <h2>About Me</h2>
+                            <p>This is the about page. Add your information here.</p>`;
                         break;
                     case 'services':
-                        content.innerHTML = `<h2>Our Services</h2><p>This is the services page. Add your services here.</p><p>Here is an example of LaTeX rendering: \\( a^2 + b^2 = c^2 \\)</p>`; // Added LaTeX example
+                        document.getElementById("main-content").innerHTML = `
+                            <h2>Our Services</h2>
+                            <p>This is the services page. Add your services here.</p>
+                            <p>Here is an example of LaTeX rendering: \\( a^2 + b^2 = c^2 \\)</p>`;
                         break;
                     case 'portfolio':
-                        content.innerHTML = `<h2>Portfolio</h2><p>This is the portfolio page. Showcase your work here.</p>`;
+                        document.getElementById("main-content").innerHTML = `
+                            <h2>Portfolio</h2>
+                            <p>This is the portfolio page. Showcase your work here.</p>`;
                         break;
                     case 'contact':
-                        content.innerHTML = `<h2>Contact</h2><p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>`;
+                        document.getElementById("main-content").innerHTML = `
+                            <h2>Contact</h2>
+                            <p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>`;
                         break;
                     default:
-                        content.innerHTML = `<h2>404 - Page Not Found</h2><p>The page you are looking for does not exist.</p><a href="/website/">Go back to the homepage</a>`;
+                        document.getElementById("main-content").innerHTML = `
+                            <h2>404 - Page Not Found</h2>
+                            <p>The page you are looking for does not exist.</p>
+                            <a href="/website/">Go back to the homepage</a>`;
                 }
 
-                content.classList.remove("fade-out");
-                MathJax.typeset(); // Render LaTeX
+                contentContainer.classList.remove("fade-out");
+                MathJax.typeset();
                 history.replaceState({}, "", `/website/${page === 'home' ? '' : page}`);
             }, 300);
         }
