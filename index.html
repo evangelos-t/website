@@ -8,40 +8,6 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        /* Initial loading state */
-        body.loading {
-            opacity: 0;
-            visibility: hidden;
-            overflow: hidden;
-        }
-
-        /* Content animations */
-        #content {
-            position: relative;
-            z-index: 1;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
-        }
-
-        #content.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Background animation */
-        #vanta-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-
-        /* Keep other existing styles */
         body {
             background-color: #000;
             color: #fff;
@@ -50,6 +16,29 @@
             padding: 0;
             text-align: center;
             overflow-x: hidden;
+        }
+
+        body.loading {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #content {
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #vanta-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
         }
 
         header {
@@ -84,15 +73,12 @@
             right: 20px;
             color: #0af;
             text-decoration: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 2;
+            display: none;
         }
 
         .fade-out {
             opacity: 0 !important;
-            transform: translateY(-10px);
-            transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+            transition: opacity 0.3s ease-in-out;
         }
     </style>
 </head>
@@ -112,111 +98,90 @@
             <a id="back-to-home" href="/website/" data-page="home">← Back to Home</a>
         </header>
         <section id="main-content"></section>
-        <footer></footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
     <script>
-        // Initialize background and content
-        function initializePage() {
-            try {
-                VANTA.BIRDS({
-                    el: "#vanta-bg",
-                    mouseControls: true,
-                    touchControls: true,
-                    gyroControls: false,
-                    minHeight: 200.00,
-                    minWidth: 200.00,
-                    scale: 1.00,
-                    scaleMobile: 1.00,
-                    backgroundColor: 0x000000,
-                    color1: 0x0a0a0a,
-                    color2: 0x0a0a0a,
-                    birdSize: 1.50,
-                    wingSpan: 20.00,
-                    speedLimit: 5.00,
-                    separation: 50.00,
-                    alignment: 50.00,
-                    cohesion: 50.00,
-                    quantity: 6.00
-                });
+        // Initialize background
+        VANTA.BIRDS({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            backgroundColor: 0x000000,
+            color1: 0x0a0a0a,
+            color2: 0x0a0a0a,
+            birdSize: 1.50,
+            wingSpan: 20.00,
+            speedLimit: 5.00,
+            separation: 50.00,
+            alignment: 50.00,
+            cohesion: 50.00,
+            quantity: 6.00
+        });
 
-                // Force content visibility after initialization
-                setTimeout(() => {
-                    document.getElementById('vanta-bg').style.opacity = 1;
-                    document.body.classList.remove('loading');
-                    document.getElementById('content').classList.add('visible');
-                }, 300);
-            } catch (error) {
-                console.error('Vanta.js initialization failed:', error);
-                // Fallback to showing content immediately
-                document.body.classList.remove('loading');
-                document.getElementById('content').classList.add('visible');
-            }
-        }
+        // Show content after initialization
+        setTimeout(() => {
+            document.getElementById('vanta-bg').style.opacity = 1;
+            document.body.classList.remove('loading');
+            document.getElementById('content').style.opacity = 1;
+        }, 500);
 
-        // GitHub Pages configuration
-        const basePath = '/website/';
+        // Routing logic
         const validPages = ["home", "about", "services", "portfolio", "contact"];
+        const basePath = '/website/';
 
-        function getCurrentPage() {
-            const path = window.location.pathname.replace(basePath, '').split('/')[0];
-            return validPages.includes(path) ? path : 'home';
-        }
-
-        function loadContent(page) {
+        function loadContent(page, initialLoad = false) {
             const content = document.getElementById('content');
             const mainTitle = document.getElementById('main-title');
             const mainSubtitle = document.getElementById('main-subtitle');
             const backToHome = document.getElementById('back-to-home');
 
-            // Always ensure content is visible
-            content.style.opacity = '1';
-            content.style.visibility = 'visible';
-
-            const templates = {
-                home: `
-                    <h2>About</h2>
-                    <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
-                    <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
-                `,
-                about: `
-                    <h2>About Me</h2>
-                    <p>This is the about page. Add your information here.</p>
-                `,
-                services: `
-                    <h2>Our Services</h2>
-                    <p>This is the services page. Add your services here.</p>
-                    <p>LaTeX example: \\( a^2 + b^2 = c^2 \\)</p>
-                `,
-                portfolio: `
-                    <h2>Portfolio</h2>
-                    <p>This is the portfolio page. Showcase your work here.</p>
-                `,
-                contact: `
-                    <h2>Contact</h2>
-                    <p>Reach me at <a href="mailto:example@example.com">example@example.com</a></p>
-                `
-            };
-
-            document.getElementById('main-content').innerHTML = templates[page] || `
-                <h2>404 - Page Not Found</h2>
-                <p>The page you are looking for does not exist.</p>
-                <a href="${basePath}">Go back to homepage</a>
-            `;
-
-            if (page !== 'home') {
-                mainTitle.style.display = 'none';
-                mainSubtitle.style.display = 'none';
-                backToHome.style.opacity = '1';
-            } else {
-                mainTitle.style.display = 'block';
-                mainSubtitle.style.display = 'block';
-                backToHome.style.opacity = '0';
+            if (!initialLoad) {
+                content.classList.add('fade-out');
             }
 
-            MathJax.typeset();
+            setTimeout(() => {
+                const templates = {
+                    home: `
+                        <h2>About</h2>
+                        <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
+                        <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
+                    `,
+                    about: `<h2>About Me</h2><p>This is the about page.</p>`,
+                    services: `
+                        <h2>Our Services</h2>
+                        <p>LaTeX example: \\( a^2 + b^2 = c^2 \\)</p>
+                    `,
+                    portfolio: `<h2>Portfolio</h2><p>My work examples.</p>`,
+                    contact: `<h2>Contact</h2><p>Email: example@example.com</p>`
+                };
+
+                document.getElementById('main-content').innerHTML = templates[page] || `
+                    <h2>404</h2><p>Page not found</p><a href="${basePath}">Home</a>
+                `;
+
+                if (page !== 'home') {
+                    mainTitle.style.display = 'none';
+                    mainSubtitle.style.display = 'none';
+                    backToHome.style.display = 'block';
+                } else {
+                    mainTitle.style.display = 'block';
+                    mainSubtitle.style.display = 'block';
+                    backToHome.style.display = 'none';
+                }
+
+                if (!initialLoad) {
+                    content.classList.remove('fade-out');
+                }
+                MathJax.typeset();
+                history.replaceState({}, "", `${basePath}${page === 'home' ? '' : page}`);
+            }, initialLoad ? 0 : 300);
         }
 
         // Handle initial load
@@ -224,34 +189,27 @@
             const redirect = sessionStorage.redirect;
             delete sessionStorage.redirect;
             
+            const path = window.location.pathname.replace(basePath, '');
+            const page = validPages.includes(path) ? path : 'home';
+            
             if (redirect) {
-                const path = redirect.replace(location.origin + basePath, '');
-                loadContent(validPages.includes(path) ? path : 'home');
-                history.replaceState({}, '', redirect);
+                loadContent(redirect.split('/').pop());
             } else {
-                const page = getCurrentPage();
-                loadContent(page);
+                loadContent(page, true);
             }
         }
 
         // Event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            initializePage();
-            handleInitialLoad();
-        });
-
         document.querySelectorAll('nav a, #back-to-home').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = e.target.getAttribute('data-page');
-                history.pushState({}, '', `${basePath}${page}`);
                 loadContent(page);
             });
         });
 
-        window.addEventListener('popstate', () => {
-            loadContent(getCurrentPage());
-        });
+        window.addEventListener('popstate', handleInitialLoad);
+        handleInitialLoad();
     </script>
 </body>
 </html>
