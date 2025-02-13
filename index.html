@@ -18,13 +18,11 @@
             overflow-x: hidden;
         }
 
-        /* Initial loading state */
         body.loading {
             opacity: 0;
             visibility: hidden;
         }
 
-        /* Content animations */
         #content {
             position: relative;
             z-index: 1;
@@ -38,7 +36,6 @@
             transform: translateY(0);
         }
 
-        /* Background animation */
         #vanta-bg {
             position: absolute;
             top: 0;
@@ -50,14 +47,12 @@
             transition: opacity 1s ease-in-out;
         }
 
-        /* Header styles */
         header {
             padding: 50px 20px;
             position: relative;
             transition: opacity 0.5s ease;
         }
 
-        /* Navigation styles */
         nav {
             margin: 20px 0;
         }
@@ -74,14 +69,12 @@
             text-decoration: underline;
         }
 
-        /* Section styling */
         section {
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
         }
 
-        /* Back to home button */
         #back-to-home {
             position: fixed;
             top: 20px;
@@ -93,7 +86,6 @@
             z-index: 2;
         }
 
-        /* Fade transitions */
         .fade-out {
             opacity: 0 !important;
             transform: translateY(-10px);
@@ -108,18 +100,16 @@
             <h1 id="main-title">Welcome to My Black-Themed Website</h1>
             <p id="main-subtitle">Simple. Clean. Minimalistic.</p>
             <nav>
-                <a href="/" data-page="home">Home</a>
-                <a href="/about" data-page="about">About</a>
-                <a href="/services" data-page="services">Services</a>
-                <a href="/portfolio" data-page="portfolio">Portfolio</a>
-                <a href="/contact" data-page="contact">Contact</a>
+                <a href="./" data-page="home">Home</a>
+                <a href="./about" data-page="about">About</a>
+                <a href="./services" data-page="services">Services</a>
+                <a href="./portfolio" data-page="portfolio">Portfolio</a>
+                <a href="./contact" data-page="contact">Contact</a>
             </nav>
-            <a id="back-to-home" href="/" data-page="home">← Back to Home</a>
+            <a id="back-to-home" href="./" data-page="home">← Back to Home</a>
         </header>
         <section id="main-content">
-            <h2>About</h2>
-            <p>This is a minimalist website with a dark theme, perfect for GitHub Pages.</p>
-            <p>Here is an example of LaTeX rendering: \\( E = mc^2 \\)</p>
+            <!-- Content loaded dynamically -->
         </section>
         <footer></footer>
     </div>
@@ -127,9 +117,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
     <script>
-        // Initialization sequence
+        const basePath = window.location.pathname.startsWith('/website') 
+            ? '/website/' 
+            : '/';
+
+        let vantaEffect;
         document.addEventListener('DOMContentLoaded', () => {
-            const vantaEffect = VANTA.BIRDS({
+            vantaEffect = VANTA.BIRDS({
                 el: "#vanta-bg",
                 mouseControls: true,
                 touchControls: true,
@@ -161,7 +155,6 @@
             }, 100);
         });
 
-        // Routing and content loading
         const validPages = ["home", "about", "services", "portfolio", "contact"];
 
         function loadContent(page) {
@@ -211,29 +204,30 @@
                 document.getElementById('main-content').innerHTML = templates[page] || `
                     <h2>404 - Page Not Found</h2>
                     <p>The page you are looking for does not exist.</p>
-                    <a href="/">Go back to homepage</a>
+                    <a href="${basePath}">Go back to homepage</a>
                 `;
 
                 void content.offsetHeight;
                 content.classList.remove('fade-out');
                 MathJax.typeset();
-                history.replaceState({}, "", `/${page === 'home' ? '' : page}`);
+                history.replaceState({}, "", `${basePath}${page === 'home' ? '' : page}`);
             }, 500);
         }
 
-        // Event listeners
         document.querySelectorAll('nav a, #back-to-home').forEach(link => {
             link.addEventListener('click', (e) => {
-                if (e.ctrlKey || e.metaKey) return; // Allow native new tab behavior
+                if (e.ctrlKey || e.metaKey) return;
                 e.preventDefault();
                 const page = e.target.getAttribute('data-page');
                 loadContent(page);
             });
         });
 
-        // Improved path handling
         function handleInitialLoad() {
-            const path = window.location.pathname.replace(/^\//, '').split('/')[0];
+            let path = window.location.pathname;
+            if (basePath !== '/') path = path.replace(basePath, '');
+            else path = path.replace(/^\//, '');
+            
             loadContent(validPages.includes(path) ? path : 'home');
         }
 
