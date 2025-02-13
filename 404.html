@@ -3,12 +3,8 @@
 <head>
     <meta charset="utf-8">
     <script>
-        // Preserve original path
-        const fullPath = window.location.href;
-        if (!fullPath.includes('/website/')) {
-            sessionStorage.redirect = fullPath;
-            window.location.replace('/website/');
-        }
+        sessionStorage.redirect = location.pathname;
+        location.replace('/website/');
     </script>
 </head>
 <body></body>
